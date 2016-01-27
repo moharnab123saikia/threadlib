@@ -65,7 +65,7 @@ void MyThreadInit(void(*start_funct)(void *), void *args){
 	first_thread = running;
 	//add_to_q(new_thread, ready_q);
 	swapcontext(init_context, new_context);
-	printf("\nReturned to init");
+	//printf("\nReturned to init");
 
 	return;
 
@@ -73,33 +73,33 @@ void MyThreadInit(void(*start_funct)(void *), void *args){
 }
 
 MyThread MyThreadCreate(void(*start_funct)(void *), void *args){
-	printf("\ncraete: Line 75");
+	//printf("\ncraete: Line 75");
 	struct _MyThread *new_thread = (_MyThread*)malloc(sizeof(_MyThread));
-	printf("\ncreate: thread created");
+	//printf("\ncreate: thread created");
 	ucontext_t *new_context = (ucontext_t*)malloc(sizeof(ucontext_t));
-	printf("\ncreate: context created");
+	//printf("\ncreate: context created");
 	char *p_stack = (char *)malloc(8192*sizeof(char));
 	Queue *child_q2 = (struct Queue *)malloc(sizeof(struct Queue));
 	child_q2->head = NULL;
 	child_q2->tail = NULL;
 
 	getcontext(new_context);
-	printf("\ncreate: get context called");
+	//printf("\ncreate: get context called");
 
 	new_context->uc_link = running->this_context;
-	printf("\ncreate: context linked");
+	//printf("\ncreate: context linked");
 	new_context->uc_stack.ss_sp = p_stack;
 	new_context->uc_stack.ss_size = 8192;
-	printf("\ncraete: Line 84 thread %d");
+	//printf("\ncraete: Line 84 thread %d");
 	makecontext(new_context, (void (*)(void)) start_funct, 1, args);
 	new_thread->parent = running;
 	new_thread->blocked = NULL; 
 	new_thread->children = child_q2;
 	add_to_q(new_thread, running->children);
 	new_thread->this_context = new_context;
-	printf("\ncraete: Line 90 thread %u", new_thread);
+	//printf("\ncraete: Line 90 thread %u", new_thread);
 	add_to_q(new_thread, ready_q);
-    printf("\nCREATE: Line 92");
+    //printf("\nCREATE: Line 92");
 	return (MyThread)(void *)new_thread;
 
 
@@ -121,7 +121,7 @@ void MyThreadYield(void){
 
 int MyThreadJoin(MyThread thread){
 	_MyThread *child = (_MyThread *)thread;
-
+	//printf("\nIn join");
 	if(has_thread(running->children, child) && child->parent == running){
 		add_to_q(running, block_q);
 		running->blocked = child;
@@ -134,21 +134,26 @@ int MyThreadJoin(MyThread thread){
 }
 
 void MyThreadJoinAll(void){
-	printf("JOINAll: Line 125");
+	//printf("JOINAll: Line 125");
 
 	if(is_q_empty(running->children)==0){
-		printf("JOINAll: Line 127");
+		//printf("JOINAll: Line 127");
 
 		_MyThread *old_thread = running;
+		if(has_thread(block_q, running)==0){
 		add_to_q(running, block_q);
+		//printf("Block q :\n");
+		//print_q(block_q);
+		}
+		printf("\n Size : %d",sizeOfQueue(block_q));
 		if(is_q_empty(ready_q)==0){
-			printf("JOINAll: Line 135\n");
-
+			//printf("Ready Q\n");
+			//print_q(ready_q);
 			running = rem_from_q(ready_q);
 		}
 		else 
 		{
-			printf("JOINAll: Line 141\n");
+			//printf("JOINAll: Line 141\n");
 			running->this_context = init_context;
 		}
 
@@ -161,9 +166,9 @@ void MyThreadJoinAll(void){
 
 void MyThreadExit(void){
 
-	printf("Iam at start of exit\n");
+	//printf("Iam at start of exit\n");
 
-	printf("thread address: %u\n",running);
+	//printf("thread address: %u\n",running);
 
 
 	_MyThread *this = running;
@@ -171,28 +176,39 @@ void MyThreadExit(void){
 	_MyThread *parent = running->parent;
 
 	if(parent != NULL){
-		printf("Exit: Line 164  \n ");
+		//printf("Parent:  %u ", parent);
+		//printf("Running:  %u ", running);
 		remove_thread(running, parent->children);
-	
+		//printf("\nparent->children");
+		//print_q(parent->children);
+		//printf("Empty BQ? %d", is_q_empty(block_q));
+		//printf("Has Thred  %u : %d\n", parent, has_thread(block_q, parent));
+		//printf("Size of Queue : %d\n", sizeOfQueue(parent->children));
+	if(is_q_empty(block_q)==0){
+		if(has_thread(block_q, parent)){
+		//printf("Exit: Line 169  \n ");
 
-	if(is_q_empty(block_q)==0 && has_thread(block_q, parent)){
-		printf("Exit: Line 169  \n ");
-
-		if(is_q_empty(parent->children) || parent->blocked == this){
-			printf("Exit: Line 172  \n ");
-
+		if((sizeOfQueue(parent->children)==0) || parent->blocked == this){
+	//		printf("Exit: Line 172  \n ");
+			//printf("\nBlock q before:\n");
+			//print_q(block_q);
 			remove_thread(parent, block_q);
+			//printf("\nBlock q after:\n");
+			//print_q(block_q);
 			parent->blocked = NULL;
 			add_to_q(parent, ready_q);
+			//printf("\nReady q :\n");
+			//print_q(ready_q);
 		}
 	}
 }
-   printf("Exit: Line 179  \n ");
+}
+   //printf("Exit: Line 179  \n ");
    if(running->children != NULL)
    {
 	struct Node *g_child = running->children->head;
 	if(g_child == NULL){
-		printf("No child found\n");
+	//	printf("No child found\n");
 	}
 
 	while(g_child != NULL){
@@ -212,14 +228,14 @@ void MyThreadExit(void){
 	if(is_q_empty(ready_q)==0){
 
 		running = rem_from_q(ready_q);
-		printf("ready q not empty\n");
+		//printf("ready q not empty\n");
 		//setcontext(running->this_context);
 
 	}
 	else
 	{
 		running->this_context = init_context;
-		printf("No parent found\n");
+		//printf("No parent found\n");
 		//setcontext(init_context);
 	}
 	//free(this->children);

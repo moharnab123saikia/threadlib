@@ -56,7 +56,9 @@ int has_thread(Queue *queue, _MyThread *thread){
 	struct Node *temp;
 	temp = queue->head;
 
-	while(temp->curr_thread !=thread){
+	if(temp == NULL)
+		return 0;
+	while(temp->curr_thread != thread){
 		temp = temp->next;
 		if(temp == NULL)
 			return 0;
@@ -124,7 +126,19 @@ int sizeOfQueue(Queue *q) {
 	while(p != NULL) {
 		n++;
 		p = p->next;
-		printf("\nreached size %d", n);
+		//printf("\nreached size %d", n);
 	}
 	return n;	
+}
+
+void print_q(Queue *q) {
+	struct Node *p= q->head;
+	printf("\n_________________________");
+	while(p != NULL) {
+		printf("\nThread : %u", p->curr_thread);
+		p = p->next;
+		
+	}
+	printf("\n_________________________");
+	return 0;	
 }

@@ -10,7 +10,9 @@ static void test_insert_and_deque_for_empty_queue() {
 	Queue *queue = (Queue *)malloc(sizeof(Queue));
 	queue->head = NULL;
 	queue->tail = NULL;
+
 	_MyThread *thread2;
+	has_thread(queue, thread2);
 	_MyThread *thread1 = (_MyThread *)malloc(sizeof(_MyThread));	
 	_MyThread *thread3 = (_MyThread *)malloc(sizeof(_MyThread));
 	_MyThread *thread4 = (_MyThread *)malloc(sizeof(_MyThread));
