@@ -1,5 +1,5 @@
-#ifndef MYTHREADLIB_H
-#define MYTHREADLIB_H
+#ifndef MYLIB_H
+#define MYLIB_H
 #include <ucontext.h>
 #include "queue.h"
 #define STACK 16384 //16KB stack size
@@ -17,4 +17,4 @@ typedef struct _MySemaphore{
 	struct Queue *sem_queue;
 }_MySemaphore;
 
-#endif //MYTHREADLIB_H
+#endif //MYLIB_H

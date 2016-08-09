@@ -4,7 +4,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<ucontext.h>
-#include "mythreadlib.h"
+#include "mylib.h"
 
 //Structure for queue
 struct Node{
@@ -22,6 +22,6 @@ void add_to_q(struct _MyThread *thread, Queue *queue);
 struct _MyThread* rem_from_q(struct Queue *queue);
 int has_thread(struct Queue *queue, struct _MyThread *thread);
 struct _MyThread* remove_thread(_MyThread *thread, Queue *queue);
-int sizeOfQueue(Queue *q);
+int q_size(Queue *q);
 
 #endif

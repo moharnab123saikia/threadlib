@@ -67,30 +67,6 @@ int has_thread(Queue *queue, _MyThread *thread){
 	return 1;
 }
 
-/*void remove_unconditionally(_MyThread *thread, Queue *queue) {
-	struct Node *temp = queue->head;
-	struct Node *r = queue->tail;
-	while(p != NULL) {
-		if(p->thread == thread) {
-			if(p == q->front && p == q->rear)
-				initializeQueue(q);
-			else if(p == q->front)	
-				q->front = p->next;
-			else if(p == q->rear) {
-				q->rear = r;
-				r->next = NULL;
-			}	
-			else	
-				r->next = p->next;
-			free(p);
-			return 1;
-		}	
-		r = p;
-		p = p-> next;
-	}	
-	return 0;
-}*/
-
 struct _MyThread* remove_thread(_MyThread *thread, Queue *queue){
 	struct Node *temp = queue->head;
 	if(temp !=NULL){
@@ -120,15 +96,14 @@ struct _MyThread* remove_thread(_MyThread *thread, Queue *queue){
 	}
 }
 
-int sizeOfQueue(Queue *q) {
-	int n=0;
+int q_size(Queue *q) {
+	int size=0;
 	struct Node *p= q->head;
 	while(p != NULL) {
-		n++;
+		size++;
 		p = p->next;
-		//printf("\nreached size %d", n);
 	}
-	return n;	
+	return size;	
 }
 
 void print_q(Queue *q) {
@@ -140,5 +115,6 @@ void print_q(Queue *q) {
 		
 	}
 	printf("\n_________________________");
-	return 0;	
+	return;	
 }
+
